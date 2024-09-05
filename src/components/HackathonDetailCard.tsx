@@ -3,16 +3,16 @@ import { differenceInDays, differenceInHours, differenceInMinutes, isPast, isFut
 import { useNavigate } from 'react-router-dom'
 
 interface HackathonDetailCardProp {
+  id: string
   img: string
   title: string
   startDate: Date
   endDate: Date
-  key: number
   description: string
   level: string
 }
 
-const HackathonDetailCard: React.FC<HackathonDetailCardProp> = ({ key, img, title, startDate, level, endDate, description }) => {
+const HackathonDetailCard: React.FC<HackathonDetailCardProp> = ({ id, img, title, startDate, level, endDate, description }) => {
   
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -65,7 +65,7 @@ const HackathonDetailCard: React.FC<HackathonDetailCardProp> = ({ key, img, titl
   const handleParticipateClick = () => {
     navigate('/challengedetails', {
       state: {
-        key,
+        id,
         title,
         startDate,
         level,

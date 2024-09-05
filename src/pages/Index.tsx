@@ -1,27 +1,55 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LabelledInput from '../components/LabelledInput';
 import icon from '../assets/icons/bxs_cloud-upload.svg';
-import { useHackathon } from '../context/HackathonContext'
-import { useNavigate } from 'react-router-dom';
+import { useHackathon } from '../context/HackathonContext';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Index: React.FC = () => {
-  const { addHackathon } = useHackathon();
+  const { addHackathon, editHackathon, getHackathonById } = useHackathon();
   const [formData, setFormData] = useState({
     challengeName: '',
     startDate: '',
     endDate: '',
     description: '',
     level: 'Easy',
-    file: null as File | null
+    file: null as File | null,
+    filePreview: '' // To handle file preview
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
+  useEffect(() => {
+    if (id) {
+      const hackathon = getHackathonById(id);
+      if (hackathon) {
+        setFormData({
+          challengeName: hackathon.title,
+          startDate: hackathon.startDate.toISOString().split('T')[0],
+          endDate: hackathon.endDate.toISOString().split('T')[0],
+          description: hackathon.description,
+          level: hackathon.level,
+          file: null,
+          filePreview: hackathon.img // Set the preview image URL if available
+        });
+      }
+    }
+  }, [id, getHackathonById]);
+
+  useEffect(() => {
+    if (formData.file) {
+      // Create a preview URL for the selected file
+      const fileUrl = URL.createObjectURL(formData.file);
+      setFormData(prevData => ({ ...prevData, filePreview: fileUrl }));
+      return () => URL.revokeObjectURL(fileUrl); // Clean up the URL
+    }
+  }, [formData.file]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type, files } = e.target as HTMLInputElement; 
+    const { name, value, type, files } = e.target as HTMLInputElement;
     if (type === 'file' && files) {
       setFormData(prevData => ({
         ...prevData,
-        [name]: files[0] 
+        [name]: files[0]
       }));
     } else {
       setFormData(prevData => ({
@@ -34,7 +62,8 @@ const Index: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const newHackathon = {
-      img: formData.file ? URL.createObjectURL(formData.file) : '',
+      id: id || '',
+      img: formData.filePreview,
       title: formData.challengeName,
       startDate: new Date(formData.startDate),
       endDate: new Date(formData.endDate),
@@ -42,23 +71,28 @@ const Index: React.FC = () => {
       description: formData.description
     };
 
-    addHackathon(newHackathon);
+    if (id) {
+      editHackathon(id, newHackathon);
+    } else {
+      addHackathon(newHackathon);
+    }
 
     setFormData({
       challengeName: '',
       startDate: '',
       endDate: '',
       description: '',
-      level: 'easy',
-      file: null
+      level: 'Easy',
+      file: null,
+      filePreview: '' // Reset the preview URL
     });
 
-    navigate('/challengelist')
+    navigate('/challengelist');
   };
 
   return (
     <div className="w-full h-full text-sm overflow-hidden">
-      <p className="bg-gray-100 py-4 px-12">Challenge Details</p>
+      <p className="bg-gray-100 py-4 px-12">{id ? 'Edit Challenge' : 'Add Challenge'}</p>
 
       <form onSubmit={handleSubmit} className="px-12 py-2 flex flex-col">
         <LabelledInput
@@ -106,7 +140,9 @@ const Index: React.FC = () => {
             onChange={handleChange}
           />
         </label>
-
+        {formData.filePreview && (
+          <img src={formData.filePreview} alt="Preview" className="my-2 w-1/5" />
+        )}
         <label htmlFor="level">
           Level
           <select
@@ -126,7 +162,7 @@ const Index: React.FC = () => {
           className="my-2 border p-1 rounded-md w-2/12 bg-[#44924C] text-white"
           type="submit"
         >
-          Create Challenge
+          {id ? 'Update Challenge' : 'Create Challenge'}
         </button>
       </form>
     </div>

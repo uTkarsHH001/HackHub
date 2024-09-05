@@ -15,6 +15,7 @@ const App : React.FC = () =>{
           <Route path="/" element={ <Index /> } />
           <Route path="/challengelist" element={ <ChallengeList /> } />
           <Route path="/challengedetails" element={ <ChallengeDetails /> } />
+          <Route path="/edit/:id" element={ <Index /> } />
         </Routes>
       </BrowserRouter>
     </>

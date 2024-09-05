@@ -7,7 +7,7 @@ interface DetailCardsProps {
 
 const DetailCards: React.FC<DetailCardsProps> = ({ img, text1, text2 }) => {
     return (
-        <div className="w-full w-fit flex items-center space-x-2">
+        <div className="w-fit flex items-center space-x-2">
             <img src={img} className="h-10" />
             <div>
                 <p className="text-xl font-bold">{text1}+</p>

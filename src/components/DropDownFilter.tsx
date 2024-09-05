@@ -1,5 +1,4 @@
-// DropdownFilter.tsx
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { IoIosArrowDown } from "react-icons/io"
 
 type CheckboxOption = {
@@ -7,20 +6,24 @@ type CheckboxOption = {
   value: string
 }
 
+interface DropDownFilterProps {
+  setFilters: (filters: { status: string[], level: string[] }) => void
+}
+
 const statusOptions: CheckboxOption[] = [
-  { label: 'All', value: 'all' },
-  { label: 'Active', value: 'active' },
-  { label: 'Past', value: 'past' },
-  { label: 'Upcoming', value: 'upcoming' }
+  { label: 'All', value: 'All' },
+  { label: 'Active', value: 'Active' },
+  { label: 'Past', value: 'Past' },
+  { label: 'Upcoming', value: 'Upcoming' }
 ]
 
 const levelOptions: CheckboxOption[] = [
-  { label: 'Easy', value: 'easy' },
-  { label: 'Medium', value: 'medium' },
-  { label: 'Hard', value: 'hard' }
+  { label: 'Easy', value: 'Easy' },
+  { label: 'Medium', value: 'Medium' },
+  { label: 'Hard', value: 'Hard' }
 ]
 
-const DropdownFilter: React.FC = () => {
+const DropdownFilter: React.FC<DropDownFilterProps> = ({ setFilters }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedStatus, setSelectedStatus] = useState<Set<string>>(new Set())
   const [selectedLevel, setSelectedLevel] = useState<Set<string>>(new Set())
@@ -31,27 +34,30 @@ const DropdownFilter: React.FC = () => {
   }
 
   const handleCheckboxChange = (category: 'status' | 'level', value: string) => {
+    let newSelectedStatus = selectedStatus
+    let newSelectedLevel = selectedLevel
+
     if (category === 'status') {
-      setSelectedStatus(prev => {
-        const newSelection = new Set(prev)
-        if (newSelection.has(value)) {
-          newSelection.delete(value)
-        } else {
-          newSelection.add(value)
-        }
-        return newSelection
-      })
+      newSelectedStatus = new Set(selectedStatus)
+      if (newSelectedStatus.has(value)) {
+        newSelectedStatus.delete(value)
+      } else {
+        newSelectedStatus.add(value)
+      }
+      setSelectedStatus(newSelectedStatus)
     } else {
-      setSelectedLevel(prev => {
-        const newSelection = new Set(prev)
-        if (newSelection.has(value)) {
-          newSelection.delete(value)
-        } else {
-          newSelection.add(value)
-        }
-        return newSelection
-      })
+      newSelectedLevel = new Set(selectedLevel)
+      if (newSelectedLevel.has(value)) {
+        newSelectedLevel.delete(value)
+      } else {
+        newSelectedLevel.add(value)
+      }
+      setSelectedLevel(newSelectedLevel)
     }
+    setFilters({
+      status: Array.from(newSelectedStatus),
+      level: Array.from(newSelectedLevel)
+    })
   }
 
   return (

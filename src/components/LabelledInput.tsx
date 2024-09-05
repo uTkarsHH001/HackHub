@@ -11,7 +11,7 @@ interface LabelledInputProps {
 
 const LabelledInput: React.FC<LabelledInputProps> = ({ label, name, type, placeholder, value, onChange }) => {
   return (
-    <label className="flex flex-col my-3">
+    <label className="flex flex-col my-2">
       {label}
       <input
         className="w-1/4 border border-slate-300 rounded-md block outline-none p-2"

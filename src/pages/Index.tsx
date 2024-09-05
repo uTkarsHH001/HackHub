@@ -91,8 +91,8 @@ const Index: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full text-sm overflow-hidden">
-      <p className="bg-gray-100 py-4 px-12">{id ? 'Edit Challenge' : 'Add Challenge'}</p>
+    <div className="w-full h-full text-sm overflow-hidden py-12">
+      <p className="bg-gray-100 text-md font-bold py-2 px-12">Challenge Details</p>
 
       <form onSubmit={handleSubmit} className="px-12 py-2 flex flex-col">
         <LabelledInput

@@ -20,6 +20,7 @@ const LabelledInput: React.FC<LabelledInputProps> = ({ label, name, type, placeh
         name={name}
         type={type}
         onChange={onChange}
+        required
       />
     </label>
   );

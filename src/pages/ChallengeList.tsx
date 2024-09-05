@@ -17,12 +17,18 @@ import { getStatus } from '../utils/getStatus';
 const ChallengeList: React.FC = () => {
   const [filters, setFilters] = useState<{ status?: string[]; level?: string[] }>({});
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [searchTerm, setSearchTerm] = useState<string>(''); // Add search term state
   const { hackathons } = useHackathon();
 
   // Filter and sort hackathons
   const filteredAndSortedHackathons = hackathons
     .filter((hackathon) => {
       const status = getStatus(hackathon.startDate, hackathon.endDate);
+
+      // Apply search term filter
+      const matchesSearchTerm = hackathon.title.toLowerCase().includes(searchTerm.toLowerCase());
+
+      if (!matchesSearchTerm) return false;
 
       if (filters.status && filters.status.includes('All')) {
         if (filters.level && filters.level.length > 0) {
@@ -132,7 +138,13 @@ const ChallengeList: React.FC = () => {
         </p>
         <form className='w-full flex justify-center space-x-2'>
           <div className='w-2/4'>
-            <input className='w-full p-2 rounded-lg' type="text" placeholder='Search' />
+            <input 
+              className='w-full p-2 rounded-lg' 
+              type="text" 
+              placeholder='Search' 
+              value={searchTerm} 
+              onChange={(e) => setSearchTerm(e.target.value)} // Capture search term input
+            />
           </div>
           <div className='w-1/6'>
             <DropdownFilter setFilters={setFilters} />
